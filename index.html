@@ -820,6 +820,7 @@
       .field-title { flex-basis: calc(100% - 50px); }
       .value-pill { margin-left: 48px; }
       .salary-control { grid-template-columns: 105px minmax(0, 1fr) 110px; }
+      .salary-period { display: none; }
       .choice-grid { grid-template-columns: 1fr 1fr; }
       .metrics { grid-template-columns: 1fr 1fr; }
       .metric.featured { grid-column: 1 / -1; }
@@ -901,7 +902,7 @@
               </select>
             </div>
             <div class="money-input">
-              <span class="mini-label">Salario mensual</span>
+              <span class="mini-label">Salario<span class="salary-period"> mensual</span></span>
               <input id="salary" type="text" value="5000" readonly aria-readonly="true" aria-describedby="salaryInstruction salaryHint" title="Usa el slider para cambiar este valor">
             </div>
             <div class="salary-stepper" role="group" aria-label="Ajuste manual del salario">
