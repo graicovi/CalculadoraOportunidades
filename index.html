@@ -1,0 +1,1163 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Calcula cuánto representa económicamente encontrar trabajo uno, dos o tres meses antes.">
+  <meta name="theme-color" content="#10110d">
+  <title>Calculadora de oportunidades | jobbox</title>
+  <style>
+    :root {
+      --ink: #11120f;
+      --ink-soft: #25271f;
+      --paper: #f4f3ee;
+      --surface: #ffffff;
+      --line: #dedfd7;
+      --muted: #65685d;
+      --lime: #e9ff7b;
+      --lime-strong: #d9f552;
+      --lime-dark: #849c12;
+      --shadow: 0 26px 70px rgba(19, 22, 12, .10);
+      --radius-lg: 30px;
+      --radius-md: 20px;
+      --content: 780px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--paper);
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 50% 10%, rgba(233,255,123,.16), transparent 30rem),
+        var(--paper);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, select { font: inherit; }
+    button, input[type="range"], select { cursor: pointer; }
+
+    a { color: inherit; }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .top {
+      position: relative;
+      overflow: hidden;
+      min-height: 560px;
+      padding: 28px 22px 150px;
+      color: #fff;
+      background: var(--ink);
+    }
+
+    .top::before,
+    .top::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      border-radius: 50%;
+    }
+
+    .top::before {
+      width: 420px;
+      height: 420px;
+      top: -210px;
+      right: -170px;
+      border: 1px solid rgba(233,255,123,.36);
+      box-shadow: 0 0 0 68px rgba(233,255,123,.035), 0 0 0 138px rgba(233,255,123,.025);
+    }
+
+    .top::after {
+      width: 10px;
+      height: 10px;
+      top: 138px;
+      right: max(8vw, 28px);
+      background: var(--lime);
+      box-shadow: 0 0 38px 13px rgba(233,255,123,.38);
+    }
+
+    .nav,
+    .hero,
+    main,
+    .footer-inner {
+      width: min(100%, var(--content));
+      margin-inline: auto;
+    }
+
+    .nav {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      font-size: 20px;
+      font-weight: 850;
+      letter-spacing: -.055em;
+    }
+
+    .brand-dot { color: var(--lime); }
+
+    .brand-logo {
+      display: block;
+      width: 124px;
+      height: 31px;
+      color: #fff;
+    }
+
+    .nav-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255,255,255,.68);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .nav-tag::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--lime);
+    }
+
+    .hero {
+      position: relative;
+      z-index: 1;
+      padding-top: 92px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 22px;
+      color: var(--lime);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 24px;
+      height: 1px;
+      background: currentColor;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      max-width: 720px;
+      margin-bottom: 24px;
+      font-size: clamp(42px, 9vw, 76px);
+      line-height: .98;
+      letter-spacing: -.062em;
+      text-wrap: balance;
+    }
+
+    .hero-copy {
+      max-width: 610px;
+      margin-bottom: 0;
+      color: rgba(255,255,255,.70);
+      font-size: clamp(17px, 2.8vw, 21px);
+      line-height: 1.55;
+      text-wrap: pretty;
+    }
+
+    .hero-copy strong { color: #fff; font-weight: 650; }
+
+    main {
+      position: relative;
+      z-index: 2;
+      margin-top: -92px;
+      padding: 0 18px 110px;
+    }
+
+    .calculator {
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,.8);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+    }
+
+    .form-area { padding: clamp(25px, 6vw, 52px); }
+
+    .section-kicker {
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+
+    .form-heading {
+      margin-bottom: 44px;
+      font-size: clamp(26px, 5vw, 36px);
+      line-height: 1.1;
+      letter-spacing: -.04em;
+    }
+
+    .field + .field {
+      margin-top: 42px;
+      padding-top: 42px;
+      border-top: 1px solid var(--line);
+    }
+
+    .field-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .field-number {
+      display: grid;
+      flex: 0 0 30px;
+      width: 30px;
+      height: 30px;
+      place-items: center;
+      border: 1px solid var(--ink);
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .field-title {
+      flex: 1;
+      margin: 2px 0 0;
+      font-size: clamp(17px, 3vw, 20px);
+      line-height: 1.35;
+      letter-spacing: -.02em;
+    }
+
+    .value-pill {
+      flex: none;
+      padding: 7px 11px;
+      border-radius: 999px;
+      color: #3c460b;
+      background: var(--lime);
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .salary-control {
+      display: grid;
+      grid-template-columns: 124px 1fr;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .select-wrap,
+    .money-input {
+      position: relative;
+      height: 58px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: #fafaf7;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .select-wrap:focus-within,
+    .money-input:focus-within {
+      border-color: var(--ink);
+      box-shadow: 0 0 0 3px rgba(233,255,123,.65);
+    }
+
+    .select-wrap select,
+    .money-input input {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      outline: 0;
+      color: var(--ink);
+      background: transparent;
+      font-weight: 750;
+    }
+
+    .select-wrap select {
+      appearance: none;
+      padding: 20px 34px 8px 14px;
+      font-size: 14px;
+    }
+
+    .select-wrap::after {
+      content: "⌄";
+      position: absolute;
+      right: 14px;
+      top: 18px;
+      pointer-events: none;
+      color: var(--muted);
+    }
+
+    .mini-label {
+      position: absolute;
+      z-index: 1;
+      top: 6px;
+      left: 14px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+
+    .money-input input {
+      padding: 18px 15px 4px;
+      font-size: 21px;
+      letter-spacing: -.02em;
+    }
+
+    .money-input input[readonly] {
+      cursor: default;
+      caret-color: transparent;
+    }
+
+    .control-hint {
+      margin: -8px 0 7px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .range {
+      --progress: 0%;
+      width: 100%;
+      height: 34px;
+      margin: 0;
+      appearance: none;
+      background: transparent;
+    }
+
+    .range::-webkit-slider-runnable-track {
+      height: 7px;
+      border-radius: 99px;
+      background: linear-gradient(to right, var(--ink) 0 var(--progress), #e5e6df var(--progress) 100%);
+    }
+
+    .range::-moz-range-track {
+      height: 7px;
+      border-radius: 99px;
+      background: linear-gradient(to right, var(--ink) 0 var(--progress), #e5e6df var(--progress) 100%);
+    }
+
+    .range::-webkit-slider-thumb {
+      width: 26px;
+      height: 26px;
+      margin-top: -9.5px;
+      appearance: none;
+      border: 5px solid var(--lime);
+      border-radius: 50%;
+      background: var(--ink);
+      box-shadow: 0 2px 9px rgba(0,0,0,.18);
+    }
+
+    .range::-moz-range-thumb {
+      width: 17px;
+      height: 17px;
+      border: 5px solid var(--lime);
+      border-radius: 50%;
+      background: var(--ink);
+      box-shadow: 0 2px 9px rgba(0,0,0,.18);
+    }
+
+    .range:focus-visible { outline: 2px solid var(--ink); outline-offset: 5px; border-radius: 99px; }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: -2px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 9px;
+    }
+
+    .month-choice {
+      min-height: 52px;
+      padding: 10px 8px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      color: var(--ink);
+      background: #fff;
+      font-size: 13px;
+      font-weight: 780;
+      line-height: 1.2;
+      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+    }
+
+    .month-choice:hover { transform: translateY(-2px); border-color: #aeb1a5; }
+    .month-choice[aria-pressed="true"] { border-color: var(--ink); background: var(--lime); }
+    .month-choice:focus-visible { outline: 3px solid rgba(233,255,123,.85); outline-offset: 2px; border-color: var(--ink); }
+
+    .custom-range {
+      margin-top: 20px;
+      padding: 18px 18px 12px;
+      border-radius: 16px;
+      background: #f4f4ef;
+    }
+
+    .custom-range[hidden] { display: none; }
+
+    .custom-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 6px;
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .result {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(30px, 7vw, 58px);
+      color: #fff;
+      background: var(--ink);
+    }
+
+    .result::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      right: -150px;
+      bottom: -160px;
+      border: 1px solid rgba(233,255,123,.34);
+      border-radius: 50%;
+      box-shadow: 0 0 0 45px rgba(233,255,123,.025), 0 0 0 90px rgba(233,255,123,.018);
+    }
+
+    .result-label {
+      position: relative;
+      z-index: 1;
+      margin-bottom: 12px;
+      color: rgba(255,255,255,.64);
+      font-size: clamp(15px, 3vw, 18px);
+      font-weight: 650;
+    }
+
+    .main-value {
+      position: relative;
+      z-index: 1;
+      margin-bottom: 14px;
+      color: var(--lime);
+      font-size: clamp(58px, 14vw, 106px);
+      font-weight: 850;
+      line-height: .92;
+      letter-spacing: -.075em;
+      white-space: nowrap;
+      transform-origin: left center;
+    }
+
+    .main-value.pulse { animation: valuePulse .34s ease; }
+
+    @keyframes valuePulse {
+      0% { opacity: .45; transform: translateY(6px) scale(.985); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .result-copy {
+      position: relative;
+      z-index: 1;
+      max-width: 600px;
+      margin-bottom: 34px;
+      color: rgba(255,255,255,.72);
+      font-size: clamp(16px, 3vw, 19px);
+    }
+
+    .result-copy strong { color: #fff; }
+
+    .metrics {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.15fr;
+      gap: 10px;
+    }
+
+    .metric {
+      min-width: 0;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,.11);
+      border-radius: 15px;
+      background: rgba(255,255,255,.045);
+    }
+
+    .metric.featured {
+      color: var(--ink);
+      border-color: var(--lime);
+      background: var(--lime);
+    }
+
+    .metric-label {
+      min-height: 35px;
+      margin-bottom: 9px;
+      color: rgba(255,255,255,.54);
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .metric.featured .metric-label { color: #4c560f; }
+
+    .metric-value {
+      overflow: hidden;
+      font-size: clamp(17px, 3.5vw, 23px);
+      font-weight: 820;
+      letter-spacing: -.035em;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .context {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 16px;
+      margin-top: 18px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: #fff;
+    }
+
+    .context-icon {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--lime);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .context h2 {
+      margin-bottom: 5px;
+      font-size: 14px;
+      letter-spacing: -.01em;
+    }
+
+    .context p {
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .context p:last-child { margin-bottom: 0; }
+    .context .period { color: var(--ink-soft); }
+
+    .story {
+      padding: clamp(76px, 13vw, 130px) 0 0;
+    }
+
+    .story-intro {
+      max-width: 680px;
+      margin-bottom: 54px;
+    }
+
+    .story h2,
+    .final-cta h2 {
+      margin-bottom: 21px;
+      font-size: clamp(37px, 7.5vw, 64px);
+      line-height: 1.01;
+      letter-spacing: -.058em;
+      text-wrap: balance;
+    }
+
+    .story-intro > p:not(.section-kicker),
+    .final-cta p {
+      color: var(--muted);
+      font-size: clamp(17px, 3vw, 20px);
+      text-wrap: pretty;
+    }
+
+    .personalized-line {
+      margin-top: 27px;
+      padding-left: 20px;
+      border-left: 4px solid var(--lime-dark);
+      color: var(--ink) !important;
+      font-size: clamp(20px, 4vw, 28px) !important;
+      font-weight: 760;
+      line-height: 1.3;
+      letter-spacing: -.035em;
+    }
+
+    .jobbox-card {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(28px, 7vw, 56px);
+      border-radius: var(--radius-lg);
+      color: #fff;
+      background: var(--ink);
+      box-shadow: var(--shadow);
+    }
+
+    .jobbox-card::before {
+      content: "";
+      position: absolute;
+      width: 330px;
+      height: 330px;
+      right: -175px;
+      top: -205px;
+      border: 1px solid rgba(233,255,123,.30);
+      border-radius: 50%;
+      box-shadow: 0 0 0 54px rgba(233,255,123,.025), 0 0 0 108px rgba(233,255,123,.018);
+    }
+
+    .jobbox-card > * { position: relative; z-index: 1; }
+
+    .jobbox-card h3 {
+      max-width: 580px;
+      margin-bottom: 20px;
+      font-size: clamp(30px, 6vw, 48px);
+      line-height: 1.02;
+      letter-spacing: -.05em;
+    }
+
+    .jobbox-card > p {
+      max-width: 620px;
+      color: rgba(255,255,255,.67);
+      font-size: 17px;
+    }
+
+    .scenario {
+      margin: 28px 0;
+      padding: 20px 0;
+      border-block: 1px solid rgba(255,255,255,.13);
+      color: #fff !important;
+      font-size: clamp(20px, 4vw, 27px) !important;
+      font-weight: 760;
+      line-height: 1.35;
+      letter-spacing: -.03em;
+    }
+
+    .jobbox-card .thesis {
+      margin-bottom: 27px;
+      color: var(--lime);
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .cta {
+      display: inline-flex;
+      min-height: 56px;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 22px;
+      border: 1px solid var(--lime);
+      border-radius: 13px;
+      color: var(--ink);
+      background: var(--lime);
+      font-weight: 820;
+      text-decoration: none;
+      transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+    }
+
+    .cta:hover { transform: translateY(-2px); background: var(--lime-strong); box-shadow: 0 10px 28px rgba(233,255,123,.16); }
+    .cta:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+
+    .cta-note {
+      margin: 11px 0 0 !important;
+      color: rgba(255,255,255,.5) !important;
+      font-size: 13px !important;
+    }
+
+    .principles {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 50px;
+    }
+
+    .principle {
+      min-height: 220px;
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,.58);
+    }
+
+    .principle:first-child { background: var(--lime); border-color: var(--lime); }
+
+    .principle-number {
+      margin-bottom: 48px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 850;
+      letter-spacing: .12em;
+    }
+
+    .principle:first-child .principle-number { color: #53600e; }
+
+    .principle p {
+      margin: 0;
+      font-size: clamp(17px, 3vw, 21px);
+      font-weight: 680;
+      line-height: 1.38;
+      letter-spacing: -.025em;
+    }
+
+    .disclaimer {
+      display: flex;
+      gap: 12px;
+      margin: 16px 0 0;
+      padding: 18px 20px;
+      border: 1px solid #dcdac8;
+      border-radius: 15px;
+      color: var(--muted);
+      background: #ecebe4;
+      font-size: 12px;
+    }
+
+    .disclaimer strong { color: var(--ink); }
+
+    .final-cta {
+      padding: clamp(90px, 15vw, 150px) 0 18px;
+      text-align: center;
+    }
+
+    .final-cta p { max-width: 630px; margin-inline: auto; }
+
+    .final-cta .cta {
+      margin-top: 15px;
+      min-width: 190px;
+      color: #fff;
+      border-color: var(--ink);
+      background: var(--ink);
+    }
+
+    .final-cta .cta:hover { color: var(--ink); border-color: var(--lime-dark); background: var(--lime); }
+    .final-cta .cta:focus-visible { outline-color: var(--ink); }
+
+    footer {
+      padding: 24px 22px 38px;
+      border-top: 1px solid var(--line);
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .footer-inner .brand-logo { width: 108px; height: 27px; color: var(--ink); }
+
+    @media (max-width: 660px) {
+      .top { min-height: 530px; padding-inline: 18px; }
+      .hero { padding-top: 72px; }
+      .nav-tag { font-size: 10px; }
+      main { margin-top: -76px; padding-inline: 12px; }
+      .field-head { flex-wrap: wrap; }
+      .field-title { flex-basis: calc(100% - 50px); }
+      .value-pill { margin-left: 48px; }
+      .salary-control { grid-template-columns: 105px 1fr; }
+      .choice-grid { grid-template-columns: 1fr 1fr; }
+      .metrics { grid-template-columns: 1fr 1fr; }
+      .metric.featured { grid-column: 1 / -1; }
+      .principles { grid-template-columns: 1fr; }
+      .main-value { white-space: normal; }
+    }
+
+    @media (max-width: 390px) {
+      h1 { font-size: 40px; }
+      .form-area { padding: 24px 19px 30px; }
+      .salary-control { grid-template-columns: 1fr; }
+      .select-wrap, .money-input { height: 56px; }
+      .result { padding: 30px 20px; }
+      .main-value { font-size: 52px; }
+      .context { grid-template-columns: 1fr; }
+      .footer-inner { align-items: start; flex-direction: column; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <svg class="sr-only" aria-hidden="true" focusable="false">
+    <symbol id="jobbox-logo" viewBox="0 0 1082 270">
+      <g fill="currentColor">
+        <path d="M465 111.6 c0 -97.3 0.2 -108.6 1.6 -110 2.3 -2.4 38.5 -2.4 40.8 0 1.4 1.3 1.6 6 1.6 35.6 l0 34 6 -5.6 c11.2 -10.3 25.9 -15.6 43.6 -15.6 21.7 0 40.7 8.7 54.1 24.9 13.9 16.9 21.3 41 19.9 65.3 -2.2 38.9 -23 68 -55.1 76.9 -6.2 1.7 -10.5 2.2 -19 2.2 -18.8 -0.2 -34 -5.7 -46.4 -17 l-6.1 -5.5 0 11.6 0 11.6 -20.5 0 -20.5 0 0 -108.4z m96.5 65.5 c15.4 -5.4 25.4 -19.6 27.1 -38.4 1.7 -19.6 -8.2 -38.1 -24.3 -45.4 -6.9 -3.2 -18.4 -4.2 -26.3 -2.3 -12.1 2.9 -22.8 14 -27.1 28.2 -1.8 5.9 -2.1 8.7 -1.7 18.1 0.5 12.1 1.8 16.5 7.3 25.3 4 6.2 9.8 10.9 17.3 14 7.5 3.1 19.7 3.3 27.7 0.5z"/>
+        <path d="M725.9 219 c-32.4 -4 -59.9 -24.7 -71 -53.4 -15.5 -40.2 0.5 -84.3 38.2 -105 13.2 -7.3 26.8 -10.6 43 -10.6 24 0 44.2 7.9 61.1 23.9 12.4 11.7 19.6 23.9 24 40.6 3 11.1 2.9 29.7 -0.1 40.9 -7.2 27 -27.3 48.9 -53.7 58.5 -12.9 4.7 -28.8 6.7 -41.5 5.1z m29.2 -43.8 c4.1 -2 8.4 -5.1 11.6 -8.5 8.7 -9.2 12.3 -18.5 12.3 -32.3 0 -18.8 -8.7 -33.1 -24.9 -40.8 -6.2 -2.9 -7.3 -3.1 -18.1 -3.1 -10.9 0 -11.9 0.2 -18.3 3.2 -15.5 7.3 -24.7 22.5 -24.7 40.8 0 16.3 6.5 29.2 18.9 37.7 7.4 5.2 14.1 6.8 26.1 6.5 9.4 -0.3 11.2 -0.6 17.1 -3.5z"/>
+        <path d="M811.5 218 c-1.8 -2 -1.3 -2.8 24.9 -42.1 15.7 -23.5 26.6 -40.8 26.3 -41.8 -0.2 -0.9 -12.2 -19.5 -26.7 -41.4 -21.9 -33.1 -26 -40 -25 -41.2 1 -1.3 5.2 -1.5 25.5 -1.5 l24.2 0 54.6 82 c30.1 45.1 54.7 82.9 54.7 84 0 1 -0.9 2.4 -1.9 3 -2.5 1.3 -44.6 1.4 -47 0.1 -0.9 -0.5 -7.7 -10 -15.1 -21 -11 -16.6 -13.7 -20.1 -15.6 -20.1 -2 0 -4.7 3.5 -15.5 19.8 -7.2 10.8 -13.8 20.3 -14.7 21 -1.2 0.9 -7.6 1.2 -24.2 1.2 -21.4 0 -22.8 -0.1 -24.5 -2z"/>
+        <path d="M1007.5 93.3 c-12 -2.6 -17.5 -9.1 -17.5 -20.5 0 -10.1 5.1 -16.8 14.9 -19.9 2 -0.7 10.7 -1.4 19.5 -1.6 l15.8 -0.5 -0.4 -5 c-0.9 -9.2 -7 -13.4 -18 -12.5 -7.3 0.6 -12 3.3 -13.3 7.5 l-0.9 3.2 -7.9 0 -7.9 0 0.7 -3.3 c1.2 -5.1 2.1 -7.1 5 -10.6 3.8 -4.4 9.2 -6.9 18.1 -8.3 14.5 -2.3 29 1.6 34.5 9.3 4.3 6.1 4.9 10.6 4.9 37.6 l0 25.3 -7.5 0 -7.5 0 0 -4.5 0 -4.5 -4.2 3 c-2.3 1.7 -6.4 3.7 -9.1 4.5 -4.7 1.4 -14.7 1.8 -19.2 0.8z m24.4 -13.9 c4.3 -2.6 7.1 -7.2 7.8 -13.3 l0.6 -5.1 -7.9 0 c-11 0 -20.3 1.6 -23.3 3.8 -5.7 4.2 -4 13.5 2.9 16 4.9 1.7 15.9 1 19.9 -1.4z"/>
+        <path d="M1066 57.5 l0 -36.5 7.5 0 7.5 0 0 36.5 0 36.5 -7.5 0 -7.5 0 0 -36.5z"/>
+        <path d="M1071.4 15 c-2.7 -1.1 -5.4 -4.8 -5.4 -7.5 0 -2.5 3.1 -6.1 6 -7 5.1 -1.6 10.4 4.7 8.4 10.2 -1.1 3.2 -5.9 5.4 -9 4.3z"/>
+        <path d="M17.6 252.1 l-16.7 -16.8 6.5 -3.2 c16.1 -7.9 28.1 -24.9 30.1 -42.6 0.3 -2.7 1.4 -34 2.5 -69.5 1.1 -35.5 2.3 -65.5 2.5 -66.7 0.5 -2.3 0.7 -2.3 17.9 -2.3 14.5 0 17.5 0.2 18 1.5 0.9 2.4 4.8 128.2 4.3 137.5 -1.8 28.9 -18.6 58.7 -42.3 74.7 l-6.1 4.2 -16.7 -16.8z"/>
+        <path d="M170.2 218.9 c-9.5 -1.1 -23.9 -6 -33.2 -11.2 -10.3 -5.8 -24.2 -19.6 -30.4 -30.2 -7.4 -12.8 -11.6 -27.9 -11.6 -41.9 0 -37.8 25.3 -71 62.2 -81.7 9.2 -2.6 30 -3.7 39 -2 19.2 3.6 34.4 11.7 47.6 25.2 20.5 20.9 28.6 52.6 20.6 80.9 -2.3 8.2 -8.7 20.6 -14.5 28.4 -17.5 23 -49.7 36.1 -79.7 32.5z m27.9 -36.7 c23.2 -8.1 36.2 -30.9 31.9 -56.1 -5.1 -30.1 -34.8 -47.5 -65.2 -38.1 -14.9 4.6 -26.4 16.7 -31.2 32.9 -1.8 6.2 -2.1 20.2 -0.5 27 3.8 16.8 19 31.7 36.2 35.7 8 1.8 21.4 1.1 28.8 -1.4z"/>
+        <path d="M284 111.2 c0 -83.3 0.3 -109.1 1.2 -110 0.8 -0.8 5.9 -1.2 16.4 -1.2 14.7 0 15.4 0.1 16.8 2.2 1.4 1.9 1.6 7.2 1.6 37.2 l0 34.9 4.9 -4.6 c9 -8.4 20.1 -14.3 32.3 -17.2 8.1 -1.9 25.5 -1.9 33.6 0 36 8.5 59.6 43.8 57.9 86.5 -0.6 15.4 -3.2 26.2 -9.2 38.5 -16.7 33.9 -51.7 49.3 -88.5 38.8 -8.6 -2.4 -20.2 -8.9 -26.9 -14.9 l-6.1 -5.6 0 12.1 0 12.1 -17 0 -17 0 0 -108.8z m90.6 72.7 c17.4 -3.2 31.3 -16.1 35.9 -33.5 2.1 -7.9 2.1 -22.7 0 -30.1 -5.5 -18.9 -19.3 -31.3 -38.3 -34.4 -23.2 -3.8 -44.4 10.5 -50.7 34.2 -1.9 7.1 -1.9 23 0 30.4 2.3 8.7 7.2 17 13.2 22.5 11.1 10.2 24.3 13.8 39.9 10.9z"/>
+        <path d="M930 92.1 c-0.6 -1.2 -1 -9.5 -1 -20.1 0 -10.6 0.4 -18.9 1 -20.1 1 -1.8 2.3 -1.9 21.3 -1.9 14.5 0 20.6 0.3 21.5 1.2 1.7 1.7 1.7 39.9 0 41.6 -0.9 0.9 -7 1.2 -21.5 1.2 -19 0 -20.3 -0.1 -21.3 -1.9z"/>
+        <path d="M42.1 36.8 c-0.4 -1.3 -2.3 -9.5 -4.1 -18.2 -3.1 -15.3 -3.2 -16 -1.4 -17.3 1.3 -1 7.2 -1.3 24.5 -1.3 19.1 0 22.9 0.2 23.9 1.5 1 1.3 0.7 4.5 -2 17.8 -1.7 8.9 -3.6 17 -4.1 18 -0.9 1.5 -2.8 1.7 -18.5 1.7 -17.2 0 -17.5 0 -18.3 -2.2z"/>
+      </g>
+    </symbol>
+  </svg>
+  <header class="top">
+    <nav class="nav" aria-label="Principal">
+      <svg class="brand-logo" role="img" aria-label="jobbox.ai"><use href="#jobbox-logo"></use></svg>
+      <div class="nav-tag">Calculadora de oportunidades</div>
+    </nav>
+
+    <div class="hero">
+      <p class="eyebrow">El valor de tu tiempo</p>
+      <h1>¿Cuánto vale encontrar trabajo un mes antes?</h1>
+      <p class="hero-copy"><strong>Cada mes que reduces tu búsqueda representa ingresos que puedes recuperar.</strong> Calcula cuánto vale acelerar tu próximo empleo.</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="calculator" aria-labelledby="calculator-title">
+      <div class="form-area">
+        <p class="section-kicker">Tu escenario</p>
+        <h2 class="form-heading" id="calculator-title">Tres datos. Una cifra que cambia la perspectiva.</h2>
+
+        <div class="field">
+          <div class="field-head">
+            <span class="field-number" aria-hidden="true">1</span>
+            <label class="field-title" for="salary">¿Qué salario mensual esperas conseguir?</label>
+            <output class="value-pill" id="salaryOutput" for="salary salaryRange">S/ 5,000 al mes</output>
+          </div>
+
+          <div class="salary-control">
+            <div class="select-wrap">
+              <span class="mini-label">Moneda</span>
+              <label class="sr-only" for="currency">Moneda</label>
+              <select id="currency" aria-label="Moneda">
+                <option value="PEN" selected>PEN · S/</option>
+                <option value="USD">USD · $</option>
+                <option value="EUR">EUR · €</option>
+              </select>
+            </div>
+            <div class="money-input">
+              <span class="mini-label">Salario mensual</span>
+              <input id="salary" type="text" value="5000" readonly aria-readonly="true" aria-describedby="salaryInstruction salaryHint" title="Usa el slider para cambiar este valor">
+            </div>
+          </div>
+          <p class="control-hint" id="salaryInstruction">Desliza para ajustar tu salario mensual.</p>
+          <input class="range" id="salaryRange" type="range" min="1000" max="50000" step="500" value="5000" aria-label="Salario mensual esperado">
+          <div class="range-labels" id="salaryHint"><span>1,000</span><span>50,000</span></div>
+        </div>
+
+        <div class="field">
+          <div class="field-head">
+            <span class="field-number" aria-hidden="true">2</span>
+            <label class="field-title" for="searchMonths">¿Cuánto tiempo llevas buscando trabajo?</label>
+            <output class="value-pill" id="searchMonthsOutput" for="searchMonths">3 meses</output>
+          </div>
+          <input class="range" id="searchMonths" type="range" min="0" max="18" step="1" value="3">
+          <div class="range-labels"><span>Recién empiezo</span><span>18 meses</span></div>
+        </div>
+
+        <div class="field">
+          <div class="field-head">
+            <span class="field-number" aria-hidden="true">3</span>
+            <p class="field-title" id="recoveryQuestion">¿Qué pasaría si una mejor estrategia te permitiera encontrar trabajo antes?</p>
+            <output class="value-pill" id="recoveryOutput">2 meses antes</output>
+          </div>
+          <div class="choice-grid" role="group" aria-labelledby="recoveryQuestion">
+            <button class="month-choice" type="button" data-months="1" aria-pressed="false">1 mes antes</button>
+            <button class="month-choice" type="button" data-months="2" aria-pressed="true">2 meses antes</button>
+            <button class="month-choice" type="button" data-months="3" aria-pressed="false">3 meses antes</button>
+            <button class="month-choice" type="button" data-custom aria-pressed="false">Personalizar</button>
+          </div>
+          <div class="custom-range" id="customRangeWrap" hidden>
+            <div class="custom-head"><label for="customMonths">Meses que podrías reducir</label><output id="customMonthsOutput" for="customMonths">4 meses</output></div>
+            <input class="range" id="customMonths" type="range" min="1" max="6" step="1" value="4">
+            <div class="range-labels"><span>1 mes</span><span>6 meses</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result" aria-labelledby="resultTitle">
+        <p class="result-label" id="resultTitle">Si encontraras trabajo 2 meses antes…</p>
+        <div class="main-value" id="mainValue" role="status" aria-live="polite">S/ 10,000</div>
+        <p class="result-copy">Ese es el <strong>ingreso potencial</strong> que representa reducir tu búsqueda en solo <span id="resultMonthsWords">dos meses</span>.</p>
+
+        <div class="metrics" aria-label="Indicadores de valor">
+          <div class="metric">
+            <div class="metric-label">Un mes de tu tiempo vale</div>
+            <div class="metric-value" id="monthValue">S/ 5,000</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Una semana vale aproximadamente</div>
+            <div class="metric-value" id="weekValue">S/ 1,154</div>
+          </div>
+          <div class="metric featured">
+            <div class="metric-label" id="recoveredMetricLabel">Dos meses antes representarían</div>
+            <div class="metric-value" id="recoveredValue">S/ 10,000</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="context" aria-labelledby="contextTitle">
+      <div class="context-icon" aria-hidden="true">↗</div>
+      <div>
+        <h2 id="contextTitle">Tu búsqueda, en contexto</h2>
+        <p id="contextMessage">Cada mes adicional empieza a tener un impacto económico importante. Reducir el tiempo de búsqueda puede hacer una diferencia considerable.</p>
+        <p class="period" id="periodValue">Durante estos 3 meses, el ingreso asociado a un puesto de ese nivel equivale aproximadamente a <strong>S/ 15,000</strong>.</p>
+      </div>
+    </aside>
+
+    <section class="story">
+      <div class="story-intro">
+        <p class="section-kicker">La idea importante</p>
+        <h2>Tu tiempo tiene un valor.</h2>
+        <p>Buscar trabajo mejor no se trata simplemente de postular más. Se trata de reducir el tiempo que necesitas para llegar a la oportunidad correcta.</p>
+        <p class="personalized-line" id="personalizedMessage">En tu caso, encontrar trabajo dos meses antes representa aproximadamente S/ 10,000 en ingresos potenciales.</p>
+      </div>
+
+      <article class="jobbox-card">
+        <p class="eyebrow">Una búsqueda diferente</p>
+        <h3>¿Y si pudieras reducir tu tiempo de búsqueda?</h3>
+        <p><strong>jobbox</strong> te ayuda a dejar de depender únicamente de vacantes y postulaciones, y convertir tu búsqueda en una estrategia para generar más posibilidades reales de encontrar trabajo.</p>
+        <p class="scenario" id="jobboxScenario">Con un salario objetivo de S/ 5,000, reducir tu búsqueda en 2 meses podría representar S/ 10,000.</p>
+        <p class="thesis">No necesitas encontrar más vacantes. Necesitas encontrar trabajo antes.</p>
+        <a class="cta" href="https://jobbox.ai" target="_blank" rel="noopener noreferrer">Quiero acelerar mi búsqueda <span aria-hidden="true">&nbsp;↗</span></a>
+        <p class="cta-note">Conoce cómo jobbox puede ayudarte.</p>
+      </article>
+
+      <div class="principles" aria-label="Principios de la experiencia">
+        <article class="principle">
+          <div class="principle-number">01 — TIEMPO</div>
+          <p>El costo de una búsqueda laboral no es solamente cuánto gastas buscando trabajo. Es cuánto vale el tiempo que tardas en encontrarlo.</p>
+        </article>
+        <article class="principle">
+          <div class="principle-number">02 — ESTRATEGIA</div>
+          <p>Una buena estrategia no se mide solo por cuántas oportunidades encuentras, sino por cuánto puede reducir el tiempo hasta tu próximo empleo.</p>
+        </article>
+      </div>
+
+      <p class="disclaimer"><span aria-hidden="true">ⓘ</span><span><strong>Este cálculo presenta un escenario económico, no una predicción.</strong> No garantiza cuándo conseguirás trabajo ni que jobbox reduzca la búsqueda una cantidad determinada de meses.</span></p>
+
+      <div class="final-cta">
+        <p class="section-kicker">Tu siguiente paso</p>
+        <h2>¿Cuánto valdría para ti encontrar trabajo antes?</h2>
+        <p>Ya hiciste el cálculo. Ahora puedes trabajar en reducir ese tiempo con una forma de buscar que genere más posibilidades reales, no simplemente más postulaciones.</p>
+        <a class="cta" href="https://jobbox.ai" target="_blank" rel="noopener noreferrer">Conoce jobbox <span aria-hidden="true">&nbsp;↗</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <svg class="brand-logo" role="img" aria-label="jobbox.ai"><use href="#jobbox-logo"></use></svg>
+      <span>Calculadora de oportunidades · Escenario referencial</span>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const state = {
+        salary: 5000,
+        searchMonths: 3,
+        recoveredMonths: 2,
+        currency: 'PEN',
+        custom: false
+      };
+
+      const currencyConfig = {
+        PEN: { symbol: 'S/' },
+        USD: { symbol: 'US$' },
+        EUR: { symbol: '€' }
+      };
+
+      const monthWords = ['cero', 'un', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho'];
+
+      const $ = (selector) => document.querySelector(selector);
+      const $$ = (selector) => [...document.querySelectorAll(selector)];
+
+      const elements = {
+        salary: $('#salary'),
+        salaryRange: $('#salaryRange'),
+        salaryOutput: $('#salaryOutput'),
+        currency: $('#currency'),
+        searchMonths: $('#searchMonths'),
+        searchMonthsOutput: $('#searchMonthsOutput'),
+        recoveryOutput: $('#recoveryOutput'),
+        choices: $$('.month-choice'),
+        customRangeWrap: $('#customRangeWrap'),
+        customMonths: $('#customMonths'),
+        customMonthsOutput: $('#customMonthsOutput'),
+        resultTitle: $('#resultTitle'),
+        mainValue: $('#mainValue'),
+        resultMonthsWords: $('#resultMonthsWords'),
+        monthValue: $('#monthValue'),
+        weekValue: $('#weekValue'),
+        recoveredMetricLabel: $('#recoveredMetricLabel'),
+        recoveredValue: $('#recoveredValue'),
+        contextMessage: $('#contextMessage'),
+        periodValue: $('#periodValue'),
+        personalizedMessage: $('#personalizedMessage'),
+        jobboxScenario: $('#jobboxScenario')
+      };
+
+      function formatNumber(value) {
+        return new Intl.NumberFormat('es-PE', { maximumFractionDigits: 0 }).format(Math.round(value));
+      }
+
+      function formatMoney(value) {
+        return `${currencyConfig[state.currency].symbol} ${formatNumber(value)}`;
+      }
+
+      function pluralMonths(value, words = false) {
+        const quantity = words && monthWords[value] ? monthWords[value] : value;
+        return `${quantity} ${value === 1 ? 'mes' : 'meses'}`;
+      }
+
+      function capitalizedMonths(value) {
+        const text = pluralMonths(value, true);
+        return text.charAt(0).toUpperCase() + text.slice(1);
+      }
+
+      function setRangeProgress(range) {
+        const min = Number(range.min);
+        const max = Number(range.max);
+        const progress = ((Number(range.value) - min) / (max - min)) * 100;
+        range.style.setProperty('--progress', `${progress}%`);
+      }
+
+      function contextCopy(months) {
+        if (months <= 2) return 'Tu búsqueda recién empieza. Mejorar tu estrategia ahora puede evitar que se extienda innecesariamente.';
+        if (months <= 5) return 'Cada mes adicional empieza a tener un impacto económico importante. Reducir el tiempo de búsqueda puede hacer una diferencia considerable.';
+        return 'Después de varios meses buscando, acelerar el proceso deja de ser solamente una cuestión de tiempo: también tiene un impacto económico significativo.';
+      }
+
+      function animateValue() {
+        elements.mainValue.classList.remove('pulse');
+        void elements.mainValue.offsetWidth;
+        elements.mainValue.classList.add('pulse');
+      }
+
+      function render(animate = true) {
+        const recoveredValue = state.salary * state.recoveredMonths;
+        const weekValue = (state.salary * 12) / 52;
+        const periodValue = state.salary * state.searchMonths;
+        const recoveredNumeric = pluralMonths(state.recoveredMonths);
+        const recoveredWords = pluralMonths(state.recoveredMonths, true);
+        const searchNumeric = pluralMonths(state.searchMonths);
+
+        elements.salary.value = state.salary;
+        elements.salaryRange.value = state.salary;
+        elements.searchMonths.value = state.searchMonths;
+        elements.customMonths.value = state.recoveredMonths;
+        elements.salaryOutput.textContent = `${formatMoney(state.salary)} al mes`;
+        elements.searchMonthsOutput.textContent = searchNumeric;
+        elements.recoveryOutput.textContent = `${recoveredNumeric} antes`;
+        elements.customMonthsOutput.textContent = recoveredNumeric;
+
+        elements.resultTitle.textContent = `Si encontraras trabajo ${recoveredNumeric} antes…`;
+        elements.mainValue.textContent = formatMoney(recoveredValue);
+        elements.resultMonthsWords.textContent = recoveredWords;
+        elements.monthValue.textContent = formatMoney(state.salary);
+        elements.weekValue.textContent = formatMoney(weekValue);
+        elements.recoveredMetricLabel.textContent = `${capitalizedMonths(state.recoveredMonths)} antes representarían`;
+        elements.recoveredValue.textContent = formatMoney(recoveredValue);
+
+        elements.contextMessage.textContent = contextCopy(state.searchMonths);
+        if (state.searchMonths === 0) {
+          elements.periodValue.innerHTML = 'Estás comenzando: el mejor momento para construir una búsqueda más estratégica es <strong>ahora</strong>.';
+        } else {
+          elements.periodValue.innerHTML = `Durante ${state.searchMonths === 1 ? 'este mes' : `estos ${state.searchMonths} meses`}, el ingreso asociado a un puesto de ese nivel equivale aproximadamente a <strong>${formatMoney(periodValue)}</strong>.`;
+        }
+
+        elements.personalizedMessage.textContent = `En tu caso, encontrar trabajo ${recoveredWords} antes representa aproximadamente ${formatMoney(recoveredValue)} en ingresos potenciales.`;
+        elements.jobboxScenario.textContent = `Con un salario objetivo de ${formatMoney(state.salary)}, reducir tu búsqueda en ${recoveredNumeric} podría representar ${formatMoney(recoveredValue)}.`;
+
+        elements.choices.forEach((button) => {
+          const isActive = state.custom ? button.hasAttribute('data-custom') : Number(button.dataset.months) === state.recoveredMonths;
+          button.setAttribute('aria-pressed', String(isActive));
+        });
+
+        elements.customRangeWrap.hidden = !state.custom;
+        setRangeProgress(elements.salaryRange);
+        setRangeProgress(elements.searchMonths);
+        setRangeProgress(elements.customMonths);
+        if (animate) animateValue();
+      }
+
+      function setSalary(value) {
+        if (!Number.isFinite(value)) return;
+        state.salary = Math.min(50000, Math.max(1000, value));
+        render();
+      }
+
+      elements.salaryRange.addEventListener('input', (event) => setSalary(Number(event.target.value)));
+
+      elements.currency.addEventListener('change', (event) => {
+        state.currency = event.target.value;
+        render();
+      });
+
+      elements.searchMonths.addEventListener('input', (event) => {
+        state.searchMonths = Number(event.target.value);
+        render();
+      });
+
+      elements.choices.forEach((button) => {
+        button.addEventListener('click', () => {
+          if (button.hasAttribute('data-custom')) {
+            state.custom = true;
+            state.recoveredMonths = 4;
+            elements.customRangeWrap.hidden = false;
+          } else {
+            state.custom = false;
+            state.recoveredMonths = Number(button.dataset.months);
+          }
+          render();
+        });
+      });
+
+      elements.customMonths.addEventListener('input', (event) => {
+        state.custom = true;
+        state.recoveredMonths = Number(event.target.value);
+        render();
+      });
+
+      render(false);
+    })();
+  </script>
+</body>
+</html>
