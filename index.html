@@ -272,7 +272,7 @@
 
     .salary-control {
       display: grid;
-      grid-template-columns: 124px 1fr;
+      grid-template-columns: 124px minmax(0, 1fr) 116px;
       gap: 10px;
       margin-bottom: 22px;
     }
@@ -342,6 +342,36 @@
       cursor: default;
       caret-color: transparent;
     }
+
+    .salary-stepper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: 58px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: #fafaf7;
+    }
+
+    .salary-step {
+      display: grid;
+      min-width: 0;
+      padding: 0;
+      place-items: center;
+      border: 0;
+      color: var(--ink);
+      background: transparent;
+      font-size: 25px;
+      font-weight: 600;
+      line-height: 1;
+      transition: background .18s ease, color .18s ease;
+    }
+
+    .salary-step + .salary-step { border-left: 1px solid var(--line); }
+    .salary-step:hover:not(:disabled) { background: var(--lime); }
+    .salary-step:active:not(:disabled) { background: var(--lime-strong); }
+    .salary-step:focus-visible { position: relative; z-index: 1; outline: 3px solid var(--lime); outline-offset: -3px; }
+    .salary-step:disabled { cursor: not-allowed; opacity: .3; }
 
     .control-hint {
       margin: -8px 0 7px;
@@ -789,7 +819,7 @@
       .field-head { flex-wrap: wrap; }
       .field-title { flex-basis: calc(100% - 50px); }
       .value-pill { margin-left: 48px; }
-      .salary-control { grid-template-columns: 105px 1fr; }
+      .salary-control { grid-template-columns: 105px minmax(0, 1fr) 110px; }
       .choice-grid { grid-template-columns: 1fr 1fr; }
       .metrics { grid-template-columns: 1fr 1fr; }
       .metric.featured { grid-column: 1 / -1; }
@@ -800,8 +830,10 @@
     @media (max-width: 390px) {
       h1 { font-size: 40px; }
       .form-area { padding: 24px 19px 30px; }
-      .salary-control { grid-template-columns: 1fr; }
+      .salary-control { grid-template-columns: minmax(0, 1fr) 112px; }
+      .salary-control .select-wrap { grid-column: 1 / -1; }
       .select-wrap, .money-input { height: 56px; }
+      .salary-stepper { height: 56px; }
       .result { padding: 30px 20px; }
       .main-value { font-size: 52px; }
       .context { grid-template-columns: 1fr; }
@@ -871,6 +903,10 @@
             <div class="money-input">
               <span class="mini-label">Salario mensual</span>
               <input id="salary" type="text" value="5000" readonly aria-readonly="true" aria-describedby="salaryInstruction salaryHint" title="Usa el slider para cambiar este valor">
+            </div>
+            <div class="salary-stepper" role="group" aria-label="Ajuste manual del salario">
+              <button class="salary-step" id="salaryDecrease" type="button" aria-label="Disminuir salario en 500" aria-controls="salary">−</button>
+              <button class="salary-step" id="salaryIncrease" type="button" aria-label="Aumentar salario en 500" aria-controls="salary">+</button>
             </div>
           </div>
           <p class="control-hint" id="salaryInstruction">Desliza para ajustar tu salario mensual.</p>
@@ -1012,6 +1048,8 @@
       const elements = {
         salary: $('#salary'),
         salaryRange: $('#salaryRange'),
+        salaryDecrease: $('#salaryDecrease'),
+        salaryIncrease: $('#salaryIncrease'),
         salaryOutput: $('#salaryOutput'),
         currency: $('#currency'),
         searchMonths: $('#searchMonths'),
@@ -1084,6 +1122,8 @@
         elements.searchMonths.value = state.searchMonths;
         elements.customMonths.value = state.recoveredMonths;
         elements.salaryOutput.textContent = `${formatMoney(state.salary)} al mes`;
+        elements.salaryDecrease.disabled = state.salary <= 1000;
+        elements.salaryIncrease.disabled = state.salary >= 50000;
         elements.searchMonthsOutput.textContent = searchNumeric;
         elements.recoveryOutput.textContent = `${recoveredNumeric} antes`;
         elements.customMonthsOutput.textContent = recoveredNumeric;
@@ -1125,6 +1165,9 @@
       }
 
       elements.salaryRange.addEventListener('input', (event) => setSalary(Number(event.target.value)));
+
+      elements.salaryDecrease.addEventListener('click', () => setSalary(state.salary - 500));
+      elements.salaryIncrease.addEventListener('click', () => setSalary(state.salary + 500));
 
       elements.currency.addEventListener('change', (event) => {
         state.currency = event.target.value;
